@@ -1,0 +1,111 @@
+=================
+==  Local-ISP  ==
+=================
+en
+conf t
+hostname Local-ISP
+interface gig 0/0
+no shutdown
+ip address 10.0.0.1 255.255.255.0
+exit
+interface serial 0/0/0
+ip address 80.9.9.2 255.255.255.0
+no shutdown
+exit
+interface gig 0/2
+ip address 66.66.66.2 255.255.255.0
+no shutdown
+interface gig 0/1
+ip address 59.25.66.2 255.255.255.0
+no shutdown
+exit
+router rip
+version 2
+network 10.0.0.0
+exit
+router ospf 1
+network 10.0.0.0 0.0.0.255 area 1
+network 66.66.66.0 0.0.0.255 area 1
+network 59.25.66.0 0.0.0.255 area 1
+network 80.9.9.0 0.0.0.255 area 1
+redistribute rip subnets
+exit
+exit
+wr
+!
+
+==========
+==  R1  ==
+==========
+en
+conf t
+hostname R1
+interface serial 0/0/0
+ip address 80.9.9.1 255.255.255.0
+no shutdown
+exit
+interface gig 0/0
+ip address 74.47.47.2 255.255.255.0
+no shutdown
+exit
+interface serial 0/0/1
+ip address 90.90.90.2 255.255.255.0
+no shutdown
+exit
+router ospf 1
+network 80.9.9.0 0.0.0.255 area 1
+network 74.47.47.0 0.0.0.255 area 1
+network 90.90.90.0 0.0.0.255 area 1
+exit
+exit
+wr
+!
+
+==========
+==  R2  ==
+==========
+en
+conf t
+hostname R2
+interface gig 0/2
+ip address 66.66.66.1 255.255.255.0
+no shutdown
+exit
+interface gig 0/0
+ip address 88.8.8.2 255.255.255.0
+no shutdown
+exit
+router ospf 1
+network 66.66.66.0 0.0.0.255 area 1
+network 88.8.8.0 0.0.0.255 area 1
+exit
+exit
+wr
+!
+
+==========
+==  R3  ==
+==========
+en
+conf t
+hostname R3
+interface gig 0/1
+ip address 59.25.66.1 255.255.255.0
+no shutdown
+exit
+interface serial 0/0/1
+ip address 66.66.77.2 255.255.255.0
+no shutdown
+exit
+interface gig 0/0
+ip address 7.7.7.2 255.255.255.0
+no shutdown
+exit
+router ospf 1
+network 59.25.66.0 0.0.0.255 area 1
+network 66.66.77.0 0.0.0.255 area 1
+network 7.7.7.0 0.0.0.255 area 1
+exit
+exit
+wr
+!

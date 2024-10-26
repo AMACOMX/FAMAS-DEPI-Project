@@ -1,0 +1,43 @@
+ACL Requirements:
+IT can access HR and Finance
+IT can access all internet
+All Departments have access to famas.org 
+HR and Finance can access famas.org only ICMP, HTTP, and HTTPS
+Finance can access google.com and yahoo.com only HTTP and https
+HR and Finiance cannot access IT other than DHCP/DNS server
+IT can Ping HR and Finance
+HR and Finance cannot ping IT
+
+=====================
+==  Configuration  ==
+=====================
+
+en
+conf t
+ip access-list extended 100
+remark FAMAS
+
+10 permit ip 192.168.10.0 0.0.0.255 any
+!
+20 permit ip 192.168.0.0 0.0.255.255 host 192.168.10.5
+!
+30 permit tcp 192.168.0.0 0.0.255.255 host 5.5.5.5 eq 80
+30 permit tcp 192.168.0.0 0.0.255.255 host 5.5.5.5 eq 443
+!
+40 permit tcp 192.168.20.0 0.0.0.255 host 8.8.8.8 eq 80
+50 permit tcp 192.168.20.0 0.0.0.255 host 8.8.8.8 eq 443
+60 permit icmp 192.168.20.0 0.0.0.255 host 8.8.8.8
+!
+70 permit tcp 192.168.20.0 0.0.0.255 host 4.4.4.4 eq 80
+80 permit tcp 192.168.20.0 0.0.0.255 host 4.4.4.4 eq 443
+90 permit icmp 192.168.20.0 0.0.0.255 host 4.4.4.4
+!
+100 permit icmp 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255 echo-reply
+110 deny icmp 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+120 permit icmp 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255 echo-reply
+130 deny icmp 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255
+!
+exit
+interface range gigabitEthernet 0/0/0.10, gigabitEthernet 0/0/0.20, gigabitEthernet 0/0/0.30
+ip access-group 100 in
+exit
